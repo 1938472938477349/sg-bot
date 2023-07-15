@@ -22,13 +22,12 @@ def sg(profile):
     driver = webdriver.Chrome(service=Service(os.environ.get("CHROME_DRIVER_PATH")), options=options)
     driver.get(os.environ.get("URL"))
     games = driver.find_elements(By.CLASS_NAME, "giveaway__heading__name")
-
-    entered_ga = []
     maximum_i = len(games)
     i = 0
+    entered = []
     for i in range(0,maximum_i):
         game = driver.find_elements(By.CLASS_NAME, "giveaway__heading__name")[i]
-
+        title = game.text
         game.click()
         try:
             if (len(driver.find_elements(By.CLASS_NAME, "sidebar__error")) != 0):
@@ -37,20 +36,14 @@ def sg(profile):
             else:
                 enter_button = driver.find_element(By.CLASS_NAME, "sidebar__entry-insert")
                 enter_button.click()
-
-                print(game.text + colored("ADDED", "green"))
-                entered_ga.append(game.text)
-
+                entered.append(str(title))
                 time.sleep(1)
                 driver.back()
         except:
             driver.back()
     driver.close()
-    return entered_ga
+    print(entered)
 
 profiles = ["profile-directory=Default", "profile-directory=Profile 1", "profile-directory=Profile 3"]
-total_entered_ga = []
 for profile in profiles:
-    total_entered_ga + sg(profile)
-
-print(colored("GA entered: " + str(total_entered_ga), "yellow"))
+    sg(profile)
