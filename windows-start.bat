@@ -4,4 +4,5 @@ call python C:\Users\User\PycharmProjects\SG-Bot\main.py
 
 call deactivate
 
+@pause
 

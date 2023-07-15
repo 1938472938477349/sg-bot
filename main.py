@@ -51,6 +51,6 @@ def sg(profile):
 profiles = ["profile-directory=Default", "profile-directory=Profile 1", "profile-directory=Profile 3"]
 total_entered_ga = []
 for profile in profiles:
-    total_entered_ga.append(str(sg(profile)))
+    total_entered_ga + sg(profile)
 
 print(colored("GA entered: " + str(total_entered_ga), "yellow"))
