@@ -1,0 +1,2 @@
+- requires chromedriver.exe from https://chromedriver.chromium.org/downloads
+- requires .env file 
