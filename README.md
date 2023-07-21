@@ -1,2 +1,3 @@
-- requires chromedriver.exe from https://chromedriver.chromium.org/downloads
+- requires chromedriver.exe from https://chromedriver.chromium.org/downloads for chrome
+- required geckodriver for firefox
 - requires .env file 
