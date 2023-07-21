@@ -12,6 +12,8 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 import logging
 from datetime import datetime
+import schedule
+
 
 def sg_chrome(profile):
     options = webdriver.ChromeOptions()
@@ -54,11 +56,19 @@ def sg_firefox(prof):
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--headless')
-    options.binary_location = "C:/Program Files/Mozilla Firefox/firefox.exe"
+    options.binary_location = os.environ.get("PATH_FIREFOX")
     options.profile = prof
-    driver = webdriver.Firefox(service=Service(executable_path="C:/Users/User/PycharmProjects/SG-Bot/geckodriver.exe"),options=options)
+    driver = webdriver.Firefox(service=Service(executable_path=os.environ.get("PATH_GECKODRIVER")),options=options)
     driver.get(os.environ.get("URL"))
     time.sleep(2)
+
+    # check privacy pop-up
+    logging.info("Checking privacy statement...")
+    privacy = driver.find_elements(By.CLASS_NAME, "ncmp__btn")
+    if (len(privacy) != 0):
+        privacy[1].click()
+        logging.info("Privacy accepted.")
+
 
     # get profile name
     name = driver.find_element(By.CLASS_NAME, "nav__avatar-outer-wrap")
@@ -96,19 +106,27 @@ def sg_firefox(prof):
                 time.sleep(1)
     driver.close()
 
+
+
+def check_sg():
+    logging.info("Executing job on: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    profiles = ["meqq84jj.P1", "ciqu7n01.P2", "ahxyhu19.P3"]
+    for profile in profiles:
+        try:
+            sg_firefox(os.environ.get("PATH_FIREFOX_PROFILES") + profile)
+        except:
+            logging.info("Something went wrong with " + profile)
+
+
+
 if __name__ == '__main__':
     logging.basicConfig(filename='log.txt', encoding='utf-8', level=logging.INFO)
     load_dotenv()
-    profiles = [r"C:\Users\User\AppData\Roaming\Mozilla\Firefox\Profiles\meqq84jj.P1",
-                r"C:\Users\User\AppData\Roaming\Mozilla\Firefox\Profiles\ciqu7n01.P2",
-                r"C:\Users\User\AppData\Roaming\Mozilla\Firefox\Profiles\ahxyhu19.P3"]
 
-    dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    logging.info(dt_string)
-    for profile in profiles:
-        sg_firefox(profile)
+    check_sg()
 
-
-
-
-
+    schedule.every().hour.do(check_sg)
+    logging.info("Starting scheduler on: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
